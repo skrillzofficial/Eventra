@@ -1,0 +1,37 @@
+@import "tailwindcss";
+.logofont{
+    font-family: Bricolage Grotesque;
+}
+*{
+    font-family: Helvetica;
+}
+.Discoverimg{
+    background-image: url("../src/assets/Discoverimg.jpg");
+    background-position: bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.Heroimg{
+    background-image: url("../src/assets/Heroimg.jpg");
+    background-position: bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.AboutHeroimg{
+    background-image: url("../src/assets/AboutHeroimg.jpg");
+    background-position: bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.DiscoverHeroimg{
+    background-image: url("../src/assets/DiscoverHeroimg.jpg");
+    background-position: bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.ContactHeroimg{
+    background-image: url("../src/assets/ContactHeroimg.jpg");
+    background-position: bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
