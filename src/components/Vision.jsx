@@ -7,7 +7,7 @@ const Vision = () => {
   return (
     <div className="min-h-screen  py-5 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col lg:flex-row">
+        <div className="flex flex-col gap-4 lg:flex-row">
           {/* Left Section */}
           <div className="flex-1">
             <div className="mb-8">

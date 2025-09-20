@@ -63,13 +63,13 @@ const Nav = () => {
                   </div>
                 </a>
                 <a
-                  href="#"
+                  href="/login"
                   className="text-white px-3 py-2 hover:text-[#006F6A] text-sm font-medium"
                 >
                   Sign in
                 </a>
                 <a
-                  href="#"
+                  href="/signup"
                   className="bg-[#006F6A] text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   Get Started

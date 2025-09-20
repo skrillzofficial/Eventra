@@ -5,6 +5,8 @@ import LandingPage from './components/pages/LandingPage'
 import AboutPage from './components/pages/AboutPage'
 import DiscoverEvent from './components/pages/DiscoverEvent'
 import ContactPage from './components/pages/ContactPage'
+import SignUp from './Auth/SignUp'
+import Login from './Auth/Login'
 
 
 function App() {
@@ -18,6 +20,9 @@ function App() {
           <Route path="/about" element={<AboutPage/>} />
           <Route path="/discover" element={<DiscoverEvent/>} />
           <Route path="/contact" element={<ContactPage/>} />
+          {/* Auth */}
+          <Route path="/signup" element={<SignUp/>} />
+          <Route path="/login" element={<Login/>} />
         </Routes>
       </BrowserRouter>
     </>
