@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from "react-router-dom";
 
 const Discover = () => {
    return (
@@ -17,9 +18,9 @@ const Discover = () => {
             </p>
           </div>
           <div>
-            <button className="bg-[#006F6A] hover:bg-[#005a55] text-white font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-md">
+            <NavLink to="/discover" className="bg-[#006F6A] hover:bg-[#005a55] text-white font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-md">
               Discover Events
-            </button>
+            </NavLink>
           </div>
         </div>
       </div>
