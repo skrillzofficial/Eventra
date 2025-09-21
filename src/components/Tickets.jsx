@@ -106,84 +106,165 @@ const Tickets = () => {
             events.map((event) => (
               <div
                 key={event.id}
-                className="flex flex-col lg:flex-row rounded-xl overflow-hidden bg-white shadow-lg border border-[#6BABA9] border-b-8  h-70"
+                className="flex flex-col rounded-xl overflow-hidden bg-white shadow-lg border border-[#6BABA9] border-b-8"
               >
-                {/* Left Section*/}
-                <div className="flex-1 p-6 w-1/2">
-                  <div className="mb-4">
-                    <h2 className="text-xl font-bold text-gray-900">
-                      {event.title || "Event Title"}
-                    </h2>
-                  </div>
-
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2">
-                      <MapPin
-                        className="text-[#006F6A] flex-shrink-0"
-                        size={16}
-                      />
-                      <span className="text-sm text-gray-700">
-                        {event.location || "Event Location"}
-                      </span>
+                {/* Mobile & Small Screen Layout*/}
+                <div className="lg:hidden p-3">
+                  {/* Top Section  */}
+                  <div className="relative h-48   w-full">
+                    {/* Top perforation effect for mobile */}
+                    <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-center space-y-1 z-10">
+                      {Array.from({ length: 15 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-2 h-2 rounded-tr-full rounded-br-full border border-gray-200 bg-white"
+                        ></div>
+                      ))}
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <Calendar
-                        className="text-[#006F6A] flex-shrink-0"
-                        size={16}
+                    <div className="h-full relative overflow-hidden">
+                      <img
+                        src={
+                          event.image ||
+                          "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        }
+                        alt={event.title || "Event"}
+                        className="w-full h-full rounded-r-xl object-cover"
                       />
-                      <span className="text-sm text-gray-700">
-                        {formatDate(event.date) || "Event Date"}
-                      </span>
-                    </div>
 
-                    <div className="flex items-center gap-2">
-                      <Clock
-                        className="text-[#006F6A] flex-shrink-0"
-                        size={16}
-                      />
-                      <span className="text-sm text-gray-700">
-                        {event.time || "Event Time"}
-                      </span>
+                      <div className="absolute top-15 right-0 w-10 h-20 bg-white rounded-tl-full rounded-bl-full"></div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between mt-4">
-                    <span className="text-2xl font-bold text-[#006F6A]">
-                      {formatPrice(event.price)}
-                    </span>
-                    <button className="px-4 py-2 bg-white text-[#006F6A] font-semibold rounded-lg border-2 border-[#006F6A] text-sm">
-                      Get Tickets
-                    </button>
+                  {/* Bottom Section */}
+                  <div className="p-6">
+                    <div className="mb-4">
+                      <h2 className="text-xl font-bold text-gray-900">
+                        {event.title || "Event Title"}
+                      </h2>
+                    </div>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2">
+                        <MapPin
+                          className="text-[#006F6A] flex-shrink-0"
+                          size={16}
+                        />
+                        <span className="text-sm text-gray-700">
+                          {event.location || "Event Location"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Calendar
+                          className="text-[#006F6A] flex-shrink-0"
+                          size={16}
+                        />
+                        <span className="text-sm text-gray-700">
+                          {formatDate(event.date) || "Event Date"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Clock
+                          className="text-[#006F6A] flex-shrink-0"
+                          size={16}
+                        />
+                        <span className="text-sm text-gray-700">
+                          {event.time || "Event Time"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="text-2xl font-bold text-[#006F6A]">
+                        {formatPrice(event.price)}
+                      </span>
+                      <button className="px-4 py-2 bg-white text-[#006F6A] font-semibold rounded-lg border-2 border-[#006F6A] text-sm">
+                        Get Tickets
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                {/* Right Section */}
-                <div className="relative w-1/2">
-                  {/* Ticket perforation effect */}
-                  <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-center space-y-1 z-10">
-                    {Array.from({ length: 23 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-2 h-2 rounded-tr-full rounded-br-full border border-gray-200 bg-white"
-                      ></div>
-                    ))}
+                {/* Desktop Layout */}
+                <div className="hidden lg:flex lg:flex-row h-70">
+                  {/* Left Section*/}
+                  <div className="flex-1 p-6 w-1/2">
+                    <div className="mb-4">
+                      <h2 className="text-xl font-bold text-gray-900">
+                        {event.title || "Event Title"}
+                      </h2>
+                    </div>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2">
+                        <MapPin
+                          className="text-[#006F6A] flex-shrink-0"
+                          size={16}
+                        />
+                        <span className="text-sm text-gray-700">
+                          {event.location || "Event Location"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Calendar
+                          className="text-[#006F6A] flex-shrink-0"
+                          size={16}
+                        />
+                        <span className="text-sm text-gray-700">
+                          {formatDate(event.date) || "Event Date"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <Clock
+                          className="text-[#006F6A] flex-shrink-0"
+                          size={16}
+                        />
+                        <span className="text-sm text-gray-700">
+                          {event.time || "Event Time"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4">
+                      <span className="text-2xl font-bold text-[#006F6A]">
+                        {formatPrice(event.price)}
+                      </span>
+                      <button className="px-4 py-2 bg-white text-[#006F6A] font-semibold rounded-lg border-2 border-[#006F6A] text-sm">
+                        Get Tickets
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Image with ticket cut effect */}
-                  <div className="h-full relative overflow-hidden">
-                    <img
-                      src={
-                        event.image ||
-                        "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                      }
-                      alt={event.title || "Event"}
-                      className="w-full h-full object-cover"
-                    />
+                  {/* Right Section */}
+                  <div className="relative w-1/2">
+                    {/* Ticket perforation effect */}
+                    <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-center space-y-1 z-10">
+                      {Array.from({ length: 23 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-2 h-2 rounded-tr-full rounded-br-full border border-gray-200 bg-white"
+                        ></div>
+                      ))}
+                    </div>
 
-                    {/* Cut corner effects */}
+                    {/* Image with ticket cut effect */}
+                    <div className="h-full relative overflow-hidden">
+                      <img
+                        src={
+                          event.image ||
+                          "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        }
+                        alt={event.title || "Event"}
+                        className="w-full h-full object-cover"
+                      />
 
-                    <div className="absolute top-25 right-0 w-10 h-20 bg-white rounded-tl-full rounded-bl-full"></div>
+                      {/* Cut corner effects */}
+                      <div className="absolute top-25 right-0 w-10 h-20 bg-white rounded-tl-full rounded-bl-full"></div>
+                    </div>
                   </div>
                 </div>
               </div>
