@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, User, LogOut, Ticket, Key, Search as SearchIcon } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import {
+  Menu,
+  X,
+  User,
+  LogOut,
+  Ticket,
+  Key,
+  Search as SearchIcon,
+} from "lucide-react";
 import Brandlogo from "../assets/Logo image.png";
 import logo1 from "../assets/Logo image 1.png";
 
@@ -14,9 +23,9 @@ const Nav = () => {
 
   // Check authentication status on component mount
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user'));
-    
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+
     if (token && user) {
       setIsAuthenticated(true);
       setUserData(user);
@@ -28,23 +37,23 @@ const Nav = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLogout = () => {
     // Clear user data from localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     // Update state
     setIsAuthenticated(false);
     setUserData(null);
     setIsUserMenuOpen(false);
-    
+
     // Redirect to home page
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   const handleSearch = (e) => {
@@ -65,34 +74,33 @@ const Nav = () => {
         </p>
         <p className="text-xs text-gray-500">{userData?.email}</p>
       </div>
-      
-      <a
-        href="/profile"
+      <NavLink
+        to="//profile"
         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/50 transition-colors"
         onClick={() => setIsUserMenuOpen(false)}
       >
         <User className="h-4 w-4 mr-2" />
         Profile
-      </a>
-      
-      <a
-        href="/my-tickets"
+      </NavLink>
+
+      <NavLink
+        to="/my-tickets"
         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/50 transition-colors"
         onClick={() => setIsUserMenuOpen(false)}
       >
         <Ticket className="h-4 w-4 mr-2" />
         My Tickets
-      </a>
-      
-      <a
-        href="/reset-password"
+      </NavLink>
+
+      <NavLink
+        to="/reset-password"
         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/50 transition-colors"
         onClick={() => setIsUserMenuOpen(false)}
       >
         <Key className="h-4 w-4 mr-2" />
         Reset Password
-      </a>
-      
+      </NavLink>
+
       <button
         onClick={handleLogout}
         className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/50 transition-colors"
@@ -135,17 +143,19 @@ const Nav = () => {
     <div className="relative">
       {/* Search Overlay */}
       {isSearchOpen && <SearchBar />}
-      
+
       {/* Fixed Glassy Navbar */}
-      <nav className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/10 backdrop-blur-md shadow-lg border-b border-white/20' 
-          : 'bg-transparent'
-      }`}>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/10 backdrop-blur-md shadow-lg border-b border-white/20"
+            : "bg-transparent"
+        }`}
+      >
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo - Centered */}
-            <a href="/" className="flex items-center mx-auto md:mx-0">
+            <NavLink to="/" className="flex items-center mx-auto md:mx-0">
               <div className="flex relative">
                 <img
                   className="h-3 w-auto absolute right-7 top-5"
@@ -154,31 +164,29 @@ const Nav = () => {
                 />
                 <img className="h-8 w-auto" src={Brandlogo} alt="Logo" />
               </div>
-              <span className="ml-2 text-xl font-bold text-white">
-                Eventra
-              </span>
-            </a>
+              <span className="ml-2 text-xl font-bold text-white">Eventra</span>
+            </NavLink>
 
             {/* Desktop Navigation - Centered */}
             <div className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
-              <a
-                href="/discover"
+              <NavLink
+                to="/discover"
                 className="text-white px-3 py-2 hidden lg:block hover:text-[#00A89C] text-sm font-medium transition-colors"
               >
                 Discover Events
-              </a>
-              <a
-                href="/about"
+              </NavLink>
+              <NavLink
+                to="/about"
                 className="text-white px-3 py-2 hidden lg:block hover:text-[#00A89C] text-sm font-medium transition-colors"
               >
                 About Us
-              </a>
-              <a
-                href="/contact"
+              </NavLink>
+              <NavLink
+                to="/contact"
                 className="text-white px-3 py-2 hidden lg:block hover:text-[#00A89C] text-sm font-medium transition-colors"
               >
                 Contact
-              </a>
+              </NavLink>
             </div>
 
             {/* Right Side Actions */}
@@ -199,9 +207,10 @@ const Nav = () => {
                     className="flex items-center space-x-2 text-white hover:text-[#00A89C] transition-colors"
                   >
                     <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
-                      {userData?.firstName?.[0]?.toUpperCase() || 
-                       userData?.userName?.[0]?.toUpperCase() || 
-                       <User className="h-4 w-4 text-white" />}
+                      {userData?.firstName?.[0]?.toUpperCase() ||
+                        userData?.userName?.[0]?.toUpperCase() || (
+                          <User className="h-4 w-4 text-white" />
+                        )}
                     </div>
                     <span className="text-sm font-medium hidden lg:block">
                       {userData?.userName || userData?.firstName}
@@ -211,18 +220,18 @@ const Nav = () => {
                 </div>
               ) : (
                 <div className="flex items-center space-x-3">
-                  <a
-                    href="/login"
+                  <NavLink
+                    to="/login"
                     className="text-white px-3 py-2 hidden md:block hover:text-[#00A89C] text-sm font-medium transition-colors"
                   >
                     Sign in
-                  </a>
-                  <a
-                    href="/signup"
+                  </NavLink>
+                  <NavLink
+                    to="/signup"
                     className="bg-[#006F6A] text-white hidden md:block px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-[#005a55] backdrop-blur-sm"
                   >
                     Get Started
-                  </a>
+                  </NavLink>
                 </div>
               )}
 
@@ -246,28 +255,28 @@ const Nav = () => {
         {isMenuOpen && (
           <div className="md:hidden bg-white/10 backdrop-blur-md border-t border-white/20">
             <div className="px-4 pt-2 pb-4 space-y-1">
-              <a
-                href="/discover"
+              <NavLink
+                to="/discover"
                 className="text-white hover:text-[#00A89C] block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Discover Events
-              </a>
-              <a
-                href="/about"
+              </NavLink>
+              <NavLink
+                to="/about"
                 className="text-white hover:text-[#00A89C] block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About Us
-              </a>
-              <a
-                href="/contact"
+              </NavLink>
+              <NavLink
+                to="/contact"
                 className="text-white hover:text-[#00A89C] block px-3 py-2 rounded-md text-base font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
-              </a>
-              
+              </NavLink>
+
               <div className="pt-4 pb-3 border-t border-white/30">
                 {isAuthenticated ? (
                   <>
@@ -277,28 +286,28 @@ const Nav = () => {
                       </p>
                       <p className="text-sm opacity-80">{userData?.email}</p>
                     </div>
-                    
-                    <a
-                      href="/profile"
+
+                    <NavLink
+                      to="/profile"
                       className="text-white hover:text-[#00A89C] block px-3 py-2 rounded-md text-base font-medium transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Profile
-                    </a>
-                    <a
-                      href="/my-tickets"
+                    </NavLink>
+                    <NavLink
+                      to="/my-tickets"
                       className="text-white hover:text-[#00A89C] block px-3 py-2 rounded-md text-base font-medium transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       My Tickets
-                    </a>
-                    <a
-                      href="/reset-password"
+                    </NavLink>
+                    <NavLink
+                      to="/reset-password"
                       className="text-white hover:text-[#00A89C] block px-3 py-2 rounded-md text-base font-medium transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Reset Password
-                    </a>
+                    </NavLink>
                     <button
                       onClick={handleLogout}
                       className="w-full text-left text-white hover:text-[#00A89C] block px-3 py-2 rounded-md text-base font-medium transition-colors"
@@ -308,20 +317,20 @@ const Nav = () => {
                   </>
                 ) : (
                   <>
-                    <a
-                      href="/login"
+                    <NavLink
+                      to="/login"
                       className="text-white hover:text-[#00A89C] block px-3 py-2 rounded-md text-base font-medium transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Sign in
-                    </a>
-                    <a
-                      href="/signup"
+                    </NavLink>
+                    <NavLink
+                      to="/signup"
                       className="bg-[#006F6A] text-white block px-3 py-2 rounded-md text-base font-medium transition-colors mt-2"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Get Started
-                    </a>
+                    </NavLink>
                   </>
                 )}
               </div>
@@ -329,7 +338,6 @@ const Nav = () => {
           </div>
         )}
       </nav>
-
 
       <div className="h-16"></div>
     </div>
