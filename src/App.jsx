@@ -10,6 +10,7 @@ import Login from './Auth/Login'
 import ProfilePage from './components/pages/ProfilePage'
 
 
+
 function App() {
 
 
@@ -25,6 +26,7 @@ function App() {
           {/* Auth */}
           <Route path="/signup" element={<SignUp/>} />
           <Route path="/login" element={<Login/>} />
+          
         </Routes>
       </BrowserRouter>
     </>
