@@ -31,7 +31,7 @@ const Footer = () => {
               </div>
               <span className="text-xl ml-2 font-bold">Eventra</span>
             </div>
-            <p className="text-sm text-center md: text-start">
+            <p className="text-sm text-center md:text-start">
               EVENTRA connects you to unforgettable events and experiences.
               Discover, book, and enjoy with ease, anytime and anywhere.
             </p>
