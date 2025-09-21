@@ -4,7 +4,7 @@ import HeroAbout from "../HeroAbout";
 
 const NavwithHeroAbout = () => {
   return (
-    <div className="AboutHeroimg">
+    <div className="AboutHeroimg blend-overlay">
       <Nav />
       <HeroAbout />
     </div>

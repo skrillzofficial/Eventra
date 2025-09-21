@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    login: "",
     password: "",
     rememberme: false,
   });
@@ -33,7 +33,7 @@ const Login = () => {
     setError("");
 
     // Validation
-    if (!formData.email || !formData.password) {
+    if (!formData.login || !formData.password) {
       setError("Please fill in all fields");
       setLoading(false);
       return;
@@ -41,14 +41,14 @@ const Login = () => {
 
     try {
       const response = await fetch(
-        "https://eventra-api.onrender.com/api/v1/login",
+        "https://ecommerce-backend-tb8u.onrender.com/api/v1/login",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: formData.email,
+            login: formData.login,
             password: formData.password,
           }),
         }
@@ -69,7 +69,7 @@ const Login = () => {
         }
 
         console.log("Login successful:", data);
-        navigate("/dashboard");
+        navigate("/profile");
       } else {
         setError(
           data.message || "Login failed. Please check your credentials."
@@ -83,18 +83,7 @@ const Login = () => {
     }
   };
 
-  // Check for remembered email
-  useEffect(() => {
-    const rememberedEmail = localStorage.getItem("rememberedEmail");
-    if (rememberedEmail) {
-      setFormData((prev) => ({
-        ...prev,
-        email: rememberedEmail,
-        rememberme: true,
-      }));
-    }
-  }, []);
-
+  
   return (
     <div className="container mx-auto min-h-screen flex flex-col lg:flex-row">
       {/* Form Section - Changed to 50% width */}
@@ -137,13 +126,13 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Email address
+                Email address or Username
               </label>
               <div className="mt-1">
                 <input
-                  name="email"
-                  type="email"
-                  value={formData.email}
+                  name="login"
+                  type="text"
+                  value={formData.login}
                   onChange={handleChange}
                   className="py-2 px-3 text-sm block w-full border-2 border-gray-300 rounded-md focus:ring-[#006F6A] focus:border-[#006F6A]"
                   placeholder="Enter your Email"

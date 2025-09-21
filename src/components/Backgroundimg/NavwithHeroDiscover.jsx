@@ -5,7 +5,7 @@ import DiscoverHero from '../DiscoverHero'
 
 const NavwithHeroDiscover = () => {
   return (
-    <div className='DiscoverHeroimg'>
+    <div className="DiscoverHeroimg blend-overlay">
         <Nav/>
         <DiscoverHero/>
     </div>

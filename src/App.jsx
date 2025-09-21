@@ -7,6 +7,7 @@ import DiscoverEvent from './components/pages/DiscoverEvent'
 import ContactPage from './components/pages/ContactPage'
 import SignUp from './Auth/SignUp'
 import Login from './Auth/Login'
+import ProfilePage from './components/pages/ProfilePage'
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/about" element={<AboutPage/>} />
           <Route path="/discover" element={<DiscoverEvent/>} />
           <Route path="/contact" element={<ContactPage/>} />
+          <Route path="/profile" element={<ProfilePage/>} />
           {/* Auth */}
           <Route path="/signup" element={<SignUp/>} />
           <Route path="/login" element={<Login/>} />

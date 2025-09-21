@@ -10,6 +10,7 @@ const SignUp = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
+    userName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -45,6 +46,11 @@ const SignUp = () => {
     // Last name validation
     if (!formData.lastName.trim()) {
       newErrors.lastName = "Last name is required";
+    }
+
+    // Username validation
+    if (!formData.userName.trim()) {
+      newErrors.userName = "Username is required";
     }
 
     // Email validation
@@ -89,7 +95,7 @@ const SignUp = () => {
     try {
       // Send registration data to your backend API
       const response = await fetch(
-        "https://eventra-api.onrender.com/api/v1/register",
+        "https://ecommerce-backend-tb8u.onrender.com/api/v1/register",
         {
           method: "POST",
           headers: {
@@ -98,6 +104,7 @@ const SignUp = () => {
           body: JSON.stringify({
             firstName: formData.firstName,
             lastName: formData.lastName,
+            userName: formData.userName,
             email: formData.email,
             password: formData.password,
           }),
@@ -271,6 +278,27 @@ const SignUp = () => {
                     </p>
                   )}
                 </div>
+              </div>
+            </div>
+
+<div>
+              <label className="block text-sm font-medium text-[#1B1B1B]">
+                Username
+              </label>
+              <div className="mt-1">
+                <input
+                  name="userName"
+                  type="text"
+                  value={formData.userName}
+                  onChange={handleChange}
+                  className={`py-2 px-3 text-sm block w-full border-2 rounded-md focus:ring-green-500 focus:border-green-500 ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholder="Enter your Username"
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.userName}</p>
+                )}
               </div>
             </div>
 

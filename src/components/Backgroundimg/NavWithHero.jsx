@@ -4,7 +4,7 @@ import HeroLanding from "../HeroLanding";
 
 const NavWithHero = () => {
   return (
-    <div className="Heroimg">
+    <div className="Heroimg blend-overlay">
       <Nav />
       <HeroLanding />
     </div>

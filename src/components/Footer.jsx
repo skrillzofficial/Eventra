@@ -18,7 +18,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row gap-8">
           {/* Company Info*/}
           <div className="md:w-2/5 space-y-4">
-            <div className="flex items-center">
+            <div className="flex items-center justify-center md:justify-start space-x-2">
               <div className="flex items-center">
                 <div className="flex relative">
                   <img
@@ -31,11 +31,11 @@ const Footer = () => {
               </div>
               <span className="text-xl ml-2 font-bold">Eventra</span>
             </div>
-            <p className="text-sm">
+            <p className="text-sm text-center md: text-start">
               EVENTRA connects you to unforgettable events and experiences.
               Discover, book, and enjoy with ease, anytime and anywhere.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 items-center justify-center md:justify-start">
               <a href="#" className="hover:text-white transition-colors">
                 <Facebook size={20} />
               </a>
@@ -52,10 +52,10 @@ const Footer = () => {
           </div>
 
           {/* Links and Contact Container */}
-          <div className="md:w-3/5 flex flex-col items-center  sm:flex-row gap-8">
+          <div className="md:w-3/5 flex flex-col items-center justify-center  sm:flex-row gap-8">
             {/* Contact Info */}
-            <div className="sm:w-1/3">
-              <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
+            <div className="sm:w-1/3 text-center md:text-start">
+              <h3 className="text-lg  font-semibold mb-4">Contact Us</h3>
               <div className="space-y-3">
                 <div className="flex items-center">
                   <p className="text-sm">eventra@gmail.com</p>
@@ -66,7 +66,7 @@ const Footer = () => {
               </div>
             </div>
             {/* Quick Links */}
-            <div className="sm:w-1/3">
+            <div className="sm:w-1/3 text-center md:text-start">
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
@@ -113,7 +113,7 @@ const Footer = () => {
             </div>
 
             {/* Resources */}
-            <div className="sm:w-1/3">
+            <div className="sm:w-1/3 text-center md:text-start">
               <h3 className="text-lg font-semibold mb-4">Support</h3>
               <ul className="space-y-2">
                 <li>
