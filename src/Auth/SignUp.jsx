@@ -478,7 +478,7 @@ const SignUp = () => {
           <img 
             src={signup} 
             alt="Sign up" 
-            className="w-full h-full object-cover rounded-l-3xl"
+            className="w-full h-full object-cover md:rounded-l-3xl"
           />
         </div>
       </div>

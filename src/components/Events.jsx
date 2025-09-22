@@ -1,9 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Calendar, MapPin, Clock } from "lucide-react";
 import { useEvents } from "./Context/EventContext";
 
 const Events = () => {
   const { events, loading, error } = useEvents();
+  const navigate = useNavigate();
 
   // Format date function
   const formatDate = (dateString) => {
@@ -15,6 +17,9 @@ const Events = () => {
       day: "numeric",
       year: "numeric",
     });
+  };
+  const handleGetTickets = (eventId) => {
+    navigate(`/event-details/${eventId}`);
   };
 
   if (loading) {
@@ -150,7 +155,10 @@ const Events = () => {
                             minimumFractionDigits: 2,
                           })}`}
                     </div>
-                    <button className="bg-white text-[#006F6A] border-2 border-#004D49 px-4 py-2 rounded-md hover:bg-[#006F6A] hover:text-white transition-colors text-sm font-medium">
+                    <button
+                      onClick={() => handleGetTickets(event.id)}
+                      className="bg-white text-[#006F6A] border-2 cursor-pointer border-#004D49 px-4 py-2 rounded-md hover:bg-[#006F6A] hover:text-white transition-colors text-sm font-medium"
+                    >
                       Get Tickets
                     </button>
                   </div>

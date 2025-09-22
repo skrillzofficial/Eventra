@@ -159,7 +159,7 @@ const Tickets = () => {
                       </span>
                       <button
                         onClick={() => handleGetTickets(event.id)}
-                        className="px-4 py-2 bg-white text-[#006F6A] font-semibold rounded-lg border-2 border-[#006F6A] text-sm hover:bg-[#006F6A] hover:text-white transition-colors"
+                        className="px-4 py-2 bg-white text-[#006F6A] cursor-pointer font-semibold rounded-lg border-2 border-[#006F6A] text-sm hover:bg-[#006F6A] hover:text-white"
                       >
                         Get Tickets
                       </button>
