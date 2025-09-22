@@ -81,7 +81,7 @@ const CheckoutOne = () => {
 
   // Handle back navigation safely
   const navigateBack = () => {
-    navigate("/discover");
+    navigate("/event-details/" + (eventData ? eventData.id : ""));
   };
   // Handle continue to checkout
   const handleContinue = () => {
