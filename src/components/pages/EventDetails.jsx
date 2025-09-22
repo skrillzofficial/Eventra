@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MapPin, Calendar, Clock, ArrowLeft } from "lucide-react";
 import { useEvents } from "../Context/EventContext";
-
+import { useCheckout } from "../Context/CheckoutContext";
+import { useAuth } from "../Context/AuthContext"; 
 const EventDetails = () => {
   const {
     events,
@@ -10,9 +11,13 @@ const EventDetails = () => {
     error: eventsError,
     getEventById,
   } = useEvents();
+  
+  const { setEvent: setCheckoutEvent, resetTickets } = useCheckout();
+  const { user, isAuthenticated } = useAuth(); 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false); 
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -48,6 +53,56 @@ const EventDetails = () => {
 
     loadEvent();
   }, [id, events, eventsLoading, eventsError, getEventById]);
+
+  const handlePurchaseTickets = () => {
+    if (!event) return;
+    
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
+    
+    // If authenticated, proceed with purchase
+    proceedToCheckout();
+  };
+
+  const proceedToCheckout = () => {
+    // Reset any previous ticket selections
+    resetTickets();
+    
+    // Set the current event in checkout context
+    setCheckoutEvent(event);
+    
+    // Navigate to checkout page
+    navigate('/checkout/one');
+  };
+
+  const handleSignUp = () => {
+    setShowAuthModal(false);
+    navigate('/signup', { 
+      state: { 
+        fromEvent: true,
+        eventId: event?.id,
+        returnTo: `/events/${event?.id}`
+      } 
+    });
+  };
+
+  const handleLogin = () => {
+    setShowAuthModal(false);
+    navigate('/login', { 
+      state: { 
+        fromEvent: true,
+        eventId: event?.id,
+        returnTo: `/events/${event?.id}`
+      } 
+    });
+  };
+
+  const handleCloseModal = () => {
+    setShowAuthModal(false);
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "Date TBA";
@@ -189,9 +244,28 @@ const EventDetails = () => {
                 <p className="text-2xl font-bold text-[#006F6A] mb-4">
                   {formatPrice(event.price)}
                 </p>
-                <button className="w-full py-3 bg-[#006F6A] text-white font-semibold rounded-lg hover:bg-[#005a57] transition-colors">
-                  Purchase Tickets
+                
+                {/* Show user info if authenticated */}
+                {isAuthenticated && (
+                  <div className="mb-3 p-2 bg-green-50 rounded-md">
+                    <p className="text-sm text-green-700">
+                     {user?.username || user?.email}
+                    </p>
+                  </div>
+                )}
+                
+                <button 
+                  onClick={handlePurchaseTickets}
+                  className="w-full py-3 bg-[#006F6A] text-white font-semibold rounded-lg hover:bg-[#005a57] transition-colors"
+                >
+                  {isAuthenticated ? "Purchase Tickets" : "Sign In to Purchase Tickets"}
                 </button>
+                
+                {!isAuthenticated && (
+                  <p className="text-xs text-gray-600 mt-2 text-center">
+                    You need an account to purchase tickets
+                  </p>
+                )}
               </div>
             </div>
 
@@ -208,6 +282,43 @@ const EventDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Authentication Modal */}
+      {showAuthModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Sign In Required
+            </h3>
+            <p className="text-gray-600 mb-6">
+              You need to create an account or sign in to purchase tickets for this event.
+            </p>
+            
+            <div className="space-y-3">
+              <button
+                onClick={handleSignUp}
+                className="w-full py-3 bg-[#006F6A] text-white font-semibold rounded-lg hover:bg-[#005a57] transition-colors"
+              >
+                Create New Account
+              </button>
+              
+              <button
+                onClick={handleLogin}
+                className="w-full py-3 bg-white text-[#006F6A] font-semibold rounded-lg border border-[#006F6A] hover:bg-gray-50 transition-colors"
+              >
+                Sign In to Existing Account
+              </button>
+              
+              <button
+                onClick={handleCloseModal}
+                className="w-full py-2 text-gray-600 font-medium rounded-lg hover:text-gray-800 transition-colors"
+              >
+                Maybe Later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
