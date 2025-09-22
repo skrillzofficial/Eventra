@@ -1,7 +1,9 @@
+import { useEffect } from "react";
 import { ChevronLeft, Minus, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCheckout } from "./../Context/CheckoutContext";
 import { useEvents } from "./../Context/EventContext";
+import { useState } from "react";
 
 const CheckoutOne = () => {
   const navigate = useNavigate();
@@ -13,11 +15,15 @@ const CheckoutOne = () => {
     calculateTotalFees,
     calculateTotal,
     hasTicketsSelected,
+    resetTickets, // Using the existing function from your context
   } = useCheckout();
 
   // Get event data from context or use the one from checkout
   const { getEventById } = useEvents();
   const eventData = event || (event?.id && getEventById(event.id));
+
+  // State for modal visibility
+  const [showBackModal, setShowBackModal] = useState(false);
 
   // Define ticket types with dynamic pricing from the event
   const ticketTypes = [
@@ -25,7 +31,7 @@ const CheckoutOne = () => {
       id: "regular",
       name: "Regular",
       price: eventData?.price || 10,
-      fee: 2, 
+      fee: 2,
     },
     {
       id: "vip",
@@ -38,21 +44,45 @@ const CheckoutOne = () => {
       id: "vvip",
       name: "VVIP",
       price:
-        eventData?.vvipPrice ||
-        (eventData?.price ? eventData.price * 3 : 30),
+        eventData?.vvipPrice || (eventData?.price ? eventData.price * 3 : 30),
       fee: 2,
     },
   ];
 
-  // Handle back navigation safely
+  // Handle back navigation with confirmation modal
   const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
+    if (hasTicketsSelected) {
+      // Show confirmation modal if tickets are selected
+      setShowBackModal(true);
     } else {
-      navigate("/discover"); // Fallback route
+      // Navigate directly if no tickets are selected
+      navigateBack();
     }
   };
 
+  // Confirm back navigation and clear tickets
+  const confirmBack = () => {
+    resetTickets(); // Use the existing resetTickets function from context
+    setShowBackModal(false);
+    navigateBack();
+  };
+
+  // Cancel back navigation
+  const cancelBack = () => {
+    setShowBackModal(false);
+  };
+
+  // Redirect to discover if no tickets selected
+  useEffect(() => {
+    if (!hasTicketsSelected) {
+      navigate("/checkout/one");
+    }
+  }, [hasTicketsSelected, navigate]);
+
+  // Handle back navigation safely
+  const navigateBack = () => {
+    navigate("/discover");
+  };
   // Handle continue to checkout
   const handleContinue = () => {
     if (hasTicketsSelected) {
@@ -62,6 +92,35 @@ const CheckoutOne = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Back Confirmation Modal */}
+      {showBackModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">
+              Confirm Navigation
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Going back will clear your ticket selection. Do you want to
+              continue and clear selection?
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelBack}
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmBack}
+                className="px-4 py-2 bg-[#006F6A] text-white rounded-md hover:bg-[#005a55] transition-colors"
+              >
+                Continue & Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4">

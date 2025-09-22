@@ -311,7 +311,7 @@ const CheckoutTwo = () => {
                   <div className="flex justify-between text-sm">
                     <span>{ticketQuantities.regular} x Regular</span>
                     <span>
-                      $ {(ticketQuantities.regular * 10).toLocaleString()}
+                      $ {(ticketQuantities.regular ).toLocaleString()}
                     </span>
                   </div>
                 )}
@@ -319,7 +319,7 @@ const CheckoutTwo = () => {
                   <div className="flex justify-between text-sm">
                     <span>{ticketQuantities.vip} x VIP</span>
                     <span>
-                      $ {(ticketQuantities.vip * 20).toLocaleString()}
+                      $ {(ticketQuantities.vip ).toLocaleString()}
                     </span>
                   </div>
                 )}
@@ -327,7 +327,7 @@ const CheckoutTwo = () => {
                   <div className="flex justify-between text-sm">
                     <span>{ticketQuantities.vvip} x VVIP</span>
                     <span>
-                      $ {(ticketQuantities.vvip * 30).toLocaleString()}
+                      $ {(ticketQuantities.vvip ).toLocaleString()}
                     </span>
                   </div>
                 )}
