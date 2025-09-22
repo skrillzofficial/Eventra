@@ -1,50 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { MapPin, Calendar, Clock } from "lucide-react";
+import React from "react";
+import { MapPin, Calendar, Clock, ChevronDown, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useEvents } from "../components/Context/EventContext";
 
 const Tickets = () => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { events, loading, error } = useEvents();
+  const navigate = useNavigate();
 
-  // Fetch events from backend
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          "https://ecommerce-backend-tb8u.onrender.com/api/v1/events"
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Extract events array from response
-        const eventsArray = data.events || data.data || data.items || data;
-
-        if (Array.isArray(eventsArray)) {
-          setEvents(eventsArray);
-        } else {
-          throw new Error("API response is not an array");
-        }
-      } catch (err) {
-        setError(err.message);
-        console.error("Error fetching events:", err);
-        setEvents([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
-
-  // Format date function
   const formatDate = (dateString) => {
     if (!dateString) return "Date TBA";
-
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString("en-US", {
@@ -57,21 +21,17 @@ const Tickets = () => {
     }
   };
 
-  // Format price to always have $ sign
   const formatPrice = (price) => {
     if (!price) return "$0.00";
-
-    // If price is a number, format it
-    if (typeof price === "number") {
-      return `$${price.toFixed(2)}`;
-    }
-
-    // If price is a string, ensure it has $ sign
+    if (typeof price === "number") return `$${price.toFixed(2)}`;
     if (typeof price === "string") {
       return price.startsWith("$") ? price : `$${price}`;
     }
-
     return "$0.00";
+  };
+
+  const handleGetTickets = (eventId) => {
+    navigate(`/event-details/${eventId}`);
   };
 
   if (loading) {
@@ -100,6 +60,27 @@ const Tickets = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen py-8">
+      <div className="w-full lg:w-[80%] mx-auto flex flex-col lg:flex-row lg:justify-between gap-4 px-2 mb-6">
+        <div className="flex gap-2">
+          <p className="bg-[#000000] p-2 lg:py-3 lg:px-4 rounded-lg text-white flex items-center gap-1 text-[12px] cursor-pointer">
+            All Events <ChevronDown size={16} />
+          </p>
+          <p className="border border-[#171717] p-2 lg:py-3 lg:px-4 rounded-lg text-black flex items-center gap-1 text-[12px] cursor-pointer">
+            Price <ChevronDown size={16} />
+          </p>
+          <p className="border border-[#8A8A8A] p-2 lg:py-3 lg:px-4 rounded-lg text-black flex items-center gap-1 text-[12px] cursor-pointer">
+            Date <ChevronDown size={16} />
+          </p>
+        </div>
+        <div className="border border-[#8A8A8A] p-2 lg:py-3 lg:px-4 lg:w-[30%] rounded-lg text-black flex items-center gap-2 text-[12px]">
+          <Search size={16} />
+          <input
+            type="text"
+            placeholder="Search Events"
+            className="bg-transparent outline-none w-full"
+          />
+        </div>
+      </div>
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
           {events.length > 0 ? (
@@ -108,15 +89,13 @@ const Tickets = () => {
                 key={event.id}
                 className="flex flex-col rounded-xl overflow-hidden bg-white shadow-lg border border-[#6BABA9] border-b-8"
               >
-                {/* Mobile & Small Screen Layout*/}
+                {/* Mobile Layout */}
                 <div className="lg:hidden p-3">
-                  {/* Top Section  */}
-                  <div className="relative h-48   w-full">
-                    {/* Top perforation effect for mobile */}
+                  <div className="relative h-48 w-full">
                     <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-center space-y-1 z-10">
                       {Array.from({ length: 15 }).map((_, i) => (
                         <div
-                          key={i}
+                          key={`mobile-perf-${i}`}
                           className="w-2 h-2 rounded-tr-full rounded-br-full border border-gray-200 bg-white"
                         ></div>
                       ))}
@@ -131,12 +110,10 @@ const Tickets = () => {
                         alt={event.title || "Event"}
                         className="w-full h-full rounded-r-xl object-cover"
                       />
-
                       <div className="absolute top-15 right-0 w-10 h-20 bg-white rounded-tl-full rounded-bl-full"></div>
                     </div>
                   </div>
 
-                  {/* Bottom Section */}
                   <div className="p-6">
                     <div className="mb-4">
                       <h2 className="text-xl font-bold text-gray-900">
@@ -180,7 +157,10 @@ const Tickets = () => {
                       <span className="text-2xl font-bold text-[#006F6A]">
                         {formatPrice(event.price)}
                       </span>
-                      <button className="px-4 py-2 bg-white text-[#006F6A] font-semibold rounded-lg border-2 border-[#006F6A] text-sm">
+                      <button
+                        onClick={() => handleGetTickets(event.id)}
+                        className="px-4 py-2 bg-white text-[#006F6A] font-semibold rounded-lg border-2 border-[#006F6A] text-sm hover:bg-[#006F6A] hover:text-white transition-colors"
+                      >
                         Get Tickets
                       </button>
                     </div>
@@ -189,7 +169,6 @@ const Tickets = () => {
 
                 {/* Desktop Layout */}
                 <div className="hidden lg:flex lg:flex-row h-70">
-                  {/* Left Section*/}
                   <div className="flex-1 p-6 w-1/2">
                     <div className="mb-4">
                       <h2 className="text-xl font-bold text-gray-900">
@@ -233,25 +212,25 @@ const Tickets = () => {
                       <span className="text-2xl font-bold text-[#006F6A]">
                         {formatPrice(event.price)}
                       </span>
-                      <button className="px-4 py-2 bg-white text-[#006F6A] font-semibold rounded-lg border-2 border-[#006F6A] text-sm">
+                      <button
+                        onClick={() => handleGetTickets(event.id)}
+                        className="px-4 py-2 bg-white text-[#006F6A] font-semibold rounded-lg border-2 border-[#006F6A] text-sm hover:bg-[#006F6A] hover:text-white transition-colors"
+                      >
                         Get Tickets
                       </button>
                     </div>
                   </div>
 
-                  {/* Right Section */}
                   <div className="relative w-1/2">
-                    {/* Ticket perforation effect */}
                     <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-center space-y-1 z-10">
                       {Array.from({ length: 23 }).map((_, i) => (
                         <div
-                          key={i}
+                          key={`desktop-perf-${i}`}
                           className="w-2 h-2 rounded-tr-full rounded-br-full border border-gray-200 bg-white"
                         ></div>
                       ))}
                     </div>
 
-                    {/* Image with ticket cut effect */}
                     <div className="h-full relative overflow-hidden">
                       <img
                         src={
@@ -261,8 +240,6 @@ const Tickets = () => {
                         alt={event.title || "Event"}
                         className="w-full h-full object-cover"
                       />
-
-                      {/* Cut corner effects */}
                       <div className="absolute top-25 right-0 w-10 h-20 bg-white rounded-tl-full rounded-bl-full"></div>
                     </div>
                   </div>

@@ -1,36 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Calendar, MapPin, Clock, ArrowRight } from "lucide-react";
+import React from "react";
+import { Calendar, MapPin, Clock } from "lucide-react";
+import { useEvents } from "./Context/EventContext";
 
 const Events = () => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Fetch events from backend
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(
-          "https://ecommerce-backend-tb8u.onrender.com/api/v1/events"
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setEvents(data.data || data.events || []);
-      } catch (err) {
-        setError(err.message);
-        console.error("Error fetching events:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, []);
+  const { events, loading, error } = useEvents();
 
   // Format date function
   const formatDate = (dateString) => {
@@ -117,7 +90,7 @@ const Events = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.slice(0, 6).map((event) => (
               <div
-                key={event._id}
+                key={event.id || event._id}
                 className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 border border-[#6BABA9] border-b-7"
               >
                 {/* Event Image */}
