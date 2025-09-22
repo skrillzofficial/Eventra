@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { MapPin, Calendar, Clock, ArrowLeft } from "lucide-react";
 import { useEvents } from "../Context/EventContext";
 import { useCheckout } from "../Context/CheckoutContext";
-import { useAuth } from "../Context/AuthContext"; 
+import { useAuth } from "../Context/AuthContext";
 const EventDetails = () => {
   const {
     events,
@@ -11,13 +11,13 @@ const EventDetails = () => {
     error: eventsError,
     getEventById,
   } = useEvents();
-  
+
   const { setEvent: setCheckoutEvent, resetTickets } = useCheckout();
-  const { user, isAuthenticated } = useAuth(); 
+  const { user, isAuthenticated } = useAuth();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showAuthModal, setShowAuthModal] = useState(false); 
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -56,13 +56,13 @@ const EventDetails = () => {
 
   const handlePurchaseTickets = () => {
     if (!event) return;
-    
+
     // Check if user is authenticated
     if (!isAuthenticated) {
       setShowAuthModal(true);
       return;
     }
-    
+
     // If authenticated, proceed with purchase
     proceedToCheckout();
   };
@@ -70,33 +70,37 @@ const EventDetails = () => {
   const proceedToCheckout = () => {
     // Reset any previous ticket selections
     resetTickets();
-    
+
     // Set the current event in checkout context
     setCheckoutEvent(event);
-    
+
     // Navigate to checkout page
-    navigate('/checkout/one');
+    navigate("/checkout/one");
+  };
+  // Handle back navigation safely
+  const navigateBack = () => {
+    navigate("/discover");
   };
 
   const handleSignUp = () => {
     setShowAuthModal(false);
-    navigate('/signup', { 
-      state: { 
+    navigate("/signup", {
+      state: {
         fromEvent: true,
         eventId: event?.id,
-        returnTo: `/events/${event?.id}`
-      } 
+        returnTo: `/events/${event?.id}`,
+      },
     });
   };
 
   const handleLogin = () => {
     setShowAuthModal(false);
-    navigate('/login', { 
-      state: { 
+    navigate("/login", {
+      state: {
         fromEvent: true,
         eventId: event?.id,
-        returnTo: `/events/${event?.id}`
-      } 
+        returnTo: `/events/${event?.id}`,
+      },
     });
   };
 
@@ -173,7 +177,7 @@ const EventDetails = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-4xl">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigateBack()}
           className="flex items-center text-[#006F6A] mb-6 hover:underline"
         >
           <ArrowLeft size={20} className="mr-2" />
@@ -244,23 +248,25 @@ const EventDetails = () => {
                 <p className="text-2xl font-bold text-[#006F6A] mb-4">
                   {formatPrice(event.price)}
                 </p>
-                
+
                 {/* Show user info if authenticated */}
                 {isAuthenticated && (
                   <div className="mb-3 p-2 bg-green-50 rounded-md">
                     <p className="text-sm text-green-700">
-                     {user?.username || user?.email}
+                      {user?.username || user?.email}
                     </p>
                   </div>
                 )}
-                
-                <button 
+
+                <button
                   onClick={handlePurchaseTickets}
                   className="w-full py-3 bg-[#006F6A] text-white font-semibold rounded-lg hover:bg-[#005a57] transition-colors"
                 >
-                  {isAuthenticated ? "Purchase Tickets" : "Sign In to Purchase Tickets"}
+                  {isAuthenticated
+                    ? "Purchase Tickets"
+                    : "Sign In to Purchase Tickets"}
                 </button>
-                
+
                 {!isAuthenticated && (
                   <p className="text-xs text-gray-600 mt-2 text-center">
                     You need an account to purchase tickets
@@ -291,9 +297,10 @@ const EventDetails = () => {
               Sign In Required
             </h3>
             <p className="text-gray-600 mb-6">
-              You need to create an account or sign in to purchase tickets for this event.
+              You need to create an account or sign in to purchase tickets for
+              this event.
             </p>
-            
+
             <div className="space-y-3">
               <button
                 onClick={handleSignUp}
@@ -301,14 +308,14 @@ const EventDetails = () => {
               >
                 Create New Account
               </button>
-              
+
               <button
                 onClick={handleLogin}
                 className="w-full py-3 bg-white text-[#006F6A] font-semibold rounded-lg border border-[#006F6A] hover:bg-gray-50 transition-colors"
               >
                 Sign In to Existing Account
               </button>
-              
+
               <button
                 onClick={handleCloseModal}
                 className="w-full py-2 text-gray-600 font-medium rounded-lg hover:text-gray-800 transition-colors"
