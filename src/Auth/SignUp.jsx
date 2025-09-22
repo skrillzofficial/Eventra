@@ -5,6 +5,7 @@ import google from "../assets/google.png";
 import Brandlogo from "../assets/Logo image.png";
 import logo1 from "../assets/Logo image 1.png";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../components/Context/AuthContext";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -22,6 +23,7 @@ const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -92,41 +94,24 @@ const SignUp = () => {
 
     setIsLoading(true);
 
-    try {
-      // Send registration data to your backend API
-      const response = await fetch(
-        "https://ecommerce-backend-tb8u.onrender.com/api/v1/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            userName: formData.userName,
-            email: formData.email,
-            password: formData.password,
-          }),
-        }
-      );
+    const result = await register({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      userName: formData.userName,
+      email: formData.email,
+      password: formData.password,
+    });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // Registration successful
-        setShowSuccessModal(true);
-      } else {
-        setErrors({
-          submit: data.message || "Registration failed. Please try again.",
-        });
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      setErrors({ submit: "Network error. Please try again." });
-    } finally {
-      setIsLoading(false);
+    if (result.success) {
+      // Registration successful
+      setShowSuccessModal(true);
+    } else {
+      setErrors({
+        submit: result.error || "Registration failed. Please try again.",
+      });
     }
+    
+    setIsLoading(false);
   };
 
   const handleGoogleSignUp = () => {
@@ -195,7 +180,7 @@ const SignUp = () => {
       {/* Success Modal */}
       <SuccessModal />
 
-      {/* Form Section - Changed to 50% width */}
+      {/* Form Section */}
       <div className="w-full lg:w-1/2 bg-white flex flex-col justify-center py-6 px-4 sm:px-6 lg:px-16 mt-10 lg:mt-0">
         <div className="mx-auto w-full max-w-md">
           {/* Logo */}
@@ -281,7 +266,7 @@ const SignUp = () => {
               </div>
             </div>
 
-<div>
+            <div>
               <label className="block text-sm font-medium text-[#1B1B1B]">
                 Username
               </label>
@@ -292,11 +277,11 @@ const SignUp = () => {
                   value={formData.userName}
                   onChange={handleChange}
                   className={`py-2 px-3 text-sm block w-full border-2 rounded-md focus:ring-green-500 focus:border-green-500 ${
-                    errors.email ? "border-red-500" : "border-gray-300"
+                    errors.userName ? "border-red-500" : "border-gray-300"
                   }`}
                   placeholder="Enter your Username"
                 />
-                {errors.email && (
+                {errors.userName && (
                   <p className="mt-1 text-sm text-red-600">{errors.userName}</p>
                 )}
               </div>
@@ -461,7 +446,7 @@ const SignUp = () => {
                 <p className="text-sm text-[#1B1B1B]">
                   Already have an account?
                 </p>
-                <Link to="/Login">
+                <Link to="/login">
                   <button className="text-[#006F6A] hover:text-green-700 text-sm font-medium cursor-pointer">
                     Login
                   </button>
@@ -472,7 +457,7 @@ const SignUp = () => {
         </div>
       </div>
 
-      {/* Image Section - Changed to 50% width */}
+      {/* Image Section */}
       <div className="w-full lg:w-1/2">
         <div className="flex items-center justify-center w-full h-full">
           <img 

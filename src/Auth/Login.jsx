@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import login from "../assets/LogIn.jpg";
+import loogin from "../assets/LogIn.jpg";
 import google from "../assets/google.png";
 import Brandlogo from "../assets/Logo image.png";
 import logo1 from "../assets/Logo image 1.png";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../components/Context/AuthContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login, logout } = useAuth();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -39,54 +41,31 @@ const Login = () => {
       return;
     }
 
-    try {
-      const response = await fetch(
-        "https://ecommerce-backend-tb8u.onrender.com/api/v1/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            login: formData.login,
-            password: formData.password,
-          }),
-        }
-      );
+    const result = await login({
+      login: formData.login,
+      password: formData.password,
+    });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // Save token and user data
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        // If remember me is checked, store credentials
-        if (formData.rememberme) {
-          localStorage.setItem("rememberedEmail", formData.email);
-        } else {
-          localStorage.removeItem("rememberedEmail");
-        }
-
-        console.log("Login successful:", data);
-        navigate("/profile");
+    if (result.success) {
+      // If remember me is checked, store credentials
+      if (formData.rememberme) {
+        localStorage.setItem("rememberedEmail", formData.login);
       } else {
-        setError(
-          data.message || "Login failed. Please check your credentials."
-        );
+        localStorage.removeItem("rememberedEmail");
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
+
+      console.log("Login successful:", result.data);
+      navigate("/profile");
+    } else {
+      setError(result.error);
     }
+    
+    setLoading(false);
   };
 
-  
   return (
     <div className="container mx-auto min-h-screen flex flex-col lg:flex-row">
-      {/* Form Section - Changed to 50% width */}
+      {/* Form Section */}
       <div className="w-full lg:w-1/2 bg-white flex flex-col justify-center py-6 px-4 sm:px-6 lg:px-16 mt-10 lg:mt-0">
         <div className="mx-auto w-full max-w-md">
           {/* Logo */}
@@ -232,7 +211,7 @@ const Login = () => {
             <div className="mt-4">
               <div className="flex gap-1 items-center justify-start text-center">
                 <p className="text-sm text-gray-600">New User?</p>
-                <Link to="/Signup">
+                <Link to="/signup">
                   <button className="text-[#006F6A] hover:text-[#005a55] text-sm font-medium cursor-pointer">
                     Sign Up
                   </button>
@@ -243,11 +222,11 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Image Section - Changed to 50% width */}
+      {/* Image Section */}
       <div className="w-full lg:w-1/2">
         <div className="flex items-center justify-center w-full h-full">
           <img 
-            src={login} 
+            src={loogin} 
             alt="Login" 
             className="w-full h-full object-cover md:rounded-l-3xl"
           />

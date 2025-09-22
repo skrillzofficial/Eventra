@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./components/Context/AuthContext";
 import "./App.css";
 import LandingPage from "./components/pages/LandingPage";
 import AboutPage from "./components/pages/AboutPage";
@@ -13,8 +12,8 @@ import EventDetails from "./components/pages/EventDetails";
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -26,8 +25,8 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
         </Routes>
-      </BrowserRouter>
-    </>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
