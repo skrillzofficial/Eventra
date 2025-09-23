@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CreditCard, Mail, AlertCircle } from "lucide-react";
+import { CreditCard, Mail } from "lucide-react";
 
 const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -17,25 +17,18 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
       return;
     }
 
-    // Check if Paystack key is configured
-    const paystackKey = process.env.REACT_APP_PAYSTACK_PUBLIC_KEY;
-    if (!paystackKey || paystackKey === 'pk_test_...' || paystackKey === 'pk_live_...') {
-      onError("Payment configuration error. Please contact support.");
-      return;
-    }
-
     setIsProcessing(true);
     
     // Check if Paystack is loaded
     if (typeof window.PaystackPop === 'undefined') {
       setIsProcessing(false);
-      onError("Payment service loading failed. Please refresh the page.");
+      onError("Payment service is temporarily unavailable. Please refresh the page.");
       return;
     }
 
     try {
       const handler = window.PaystackPop.setup({
-        key: paystackKey,
+        key: process.env.PAYSTACK_PUBLIC_KEY,
         email: userDetails.email,
         amount: orderSummary.total * 100, // Convert to kobo
         currency: "NGN",
@@ -58,7 +51,6 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
         },
         callback: function (response) {
           setIsProcessing(false);
-          console.log("Payment successful:", response);
           onSuccess({
             method: "paystack",
             reference: response.reference,
@@ -69,36 +61,19 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
         },
         onClose: function () {
           setIsProcessing(false);
-          onError("Payment was cancelled");
+          onError("Payment was cancelled by user");
         },
       });
       
       handler.openIframe();
     } catch (error) {
       setIsProcessing(false);
-      console.error("Paystack error:", error);
-      onError("Payment initialization failed. Please try again.");
+      onError("Failed to initialize payment. Please try again.");
     }
   };
 
-  // Debug info (remove in production)
-  const isTestKey = process.env.REACT_APP_PAYSTACK_PUBLIC_KEY?.startsWith('pk_test');
-
   return (
     <div className="space-y-6">
-      {/* Debug info - remove in production */}
-      {isTestKey && (
-        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <div className="flex items-center">
-            <AlertCircle className="h-4 w-4 text-yellow-600 mr-2" />
-            <span className="text-sm font-medium text-yellow-800">TEST MODE</span>
-          </div>
-          <p className="text-xs text-yellow-700 mt-1">
-            Using Paystack test environment. Use test card: 4123450131001381
-          </p>
-        </div>
-      )}
-
       <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
         <div className="flex items-center">
           <CreditCard className="h-5 w-5 text-green-600 mr-2" />
@@ -149,7 +124,7 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
         {isProcessing ? (
           <>
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-            Initializing Payment...
+            Initializing...
           </>
         ) : (
           `Pay ₦${(orderSummary.total * 1600).toLocaleString()}`
@@ -159,6 +134,11 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
       <div className="flex items-center text-sm text-gray-600">
         <Mail className="h-4 w-4 mr-2" />
         <span>Tickets will be sent to: {userDetails.email}</span>
+      </div>
+
+      {/* Security Note */}
+      <div className="text-xs text-gray-500 text-center">
+        🔒 Your payment is secured by Paystack. We never store your card details.
       </div>
     </div>
   );
