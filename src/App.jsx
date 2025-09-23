@@ -12,6 +12,8 @@ import ProfilePage from "./components/pages/ProfilePage";
 import EventDetails from "./components/pages/EventDetails";
 import CheckoutOne from "./components/PaymentCheckout/CheckoutOne";
 import CheckoutTwo from "./components/PaymentCheckout/CheckoutTwo";
+import Payment from "./components/PaymentCheckout/Payment"; // Add this import
+import PaymentStatus from "./components/PaymentCheckout/PaymentStatus"; // Add this import
 import Onboarding from "./Auth/OnBoarding";
 import MyTickets from "./components/pages/MyTickets";
 import Account from "./components/pages/Account";
@@ -30,9 +32,13 @@ function App() {
             <Route path="/event-details/:id" element={<EventDetails />} />
             <Route path="/my-tickets" element={<MyTickets />} />
             <Route path="/account" element={<Account />} />
-            {/* Checkout */}
+            
+            {/* Checkout Flow */}
             <Route path="/checkout/one" element={<CheckoutOne />} />
             <Route path="/checkout/two" element={<CheckoutTwo />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/payment/status" element={<PaymentStatus />} />
+            
             {/* Auth */}
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
