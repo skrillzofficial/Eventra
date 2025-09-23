@@ -13,7 +13,8 @@ import EventDetails from "./components/pages/EventDetails";
 import CheckoutOne from "./components/PaymentCheckout/CheckoutOne";
 import CheckoutTwo from "./components/PaymentCheckout/CheckoutTwo";
 import Onboarding from "./Auth/OnBoarding";
-import MyTickets from './components/pages/MyTickets';
+import MyTickets from "./components/pages/MyTickets";
+import Account from "./components/pages/Account";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/event-details/:id" element={<EventDetails />} />
             <Route path="/my-tickets" element={<MyTickets />} />
+            <Route path="/account" element={<Account />} />
             {/* Checkout */}
             <Route path="/checkout/one" element={<CheckoutOne />} />
             <Route path="/checkout/two" element={<CheckoutTwo />} />

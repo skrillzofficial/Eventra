@@ -15,7 +15,7 @@ const CheckoutOne = () => {
     calculateTotalFees,
     calculateTotal,
     hasTicketsSelected,
-    resetTickets, // Using the existing function from your context
+    resetTickets,
   } = useCheckout();
 
   // Get event data from context or use the one from checkout
@@ -62,7 +62,7 @@ const CheckoutOne = () => {
 
   // Confirm back navigation and clear tickets
   const confirmBack = () => {
-    resetTickets(); // Use the existing resetTickets function from context
+    resetTickets(); 
     setShowBackModal(false);
     navigateBack();
   };

@@ -37,9 +37,9 @@ export const onboardingQuestions = [
     question: "What's your preferred budget range for events?",
     required: true,
     options: {
-      min: 0, // Minimum possible value
-      max: 500, // Maximum possible value
-      step: 10, // Increment step
+      min: 0, 
+      max: 500, 
+      step: 10,
     },
   },
   {

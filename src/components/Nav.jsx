@@ -102,7 +102,7 @@ const Nav = () => {
         <p className="text-xs text-gray-500">{userData?.email}</p>
       </div>
       <NavLink
-        to="/profile"
+        to="/account"
         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/50 transition-colors"
         onClick={() => setIsUserMenuOpen(false)}
       >
@@ -315,7 +315,7 @@ const Nav = () => {
                     </div>
 
                     <NavLink
-                      to="/profile"
+                      to="/account"
                       className="text-white hover:text-[#00A89C] block px-3 py-2 rounded-md text-base font-medium transition-colors"
                       onClick={() => setIsMenuOpen(false)}
                     >
