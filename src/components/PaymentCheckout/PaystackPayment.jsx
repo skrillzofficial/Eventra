@@ -5,11 +5,28 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [discountCode, setDiscountCode] = useState("");
 
-  const handlePaystackPayment = async () => {
+  const handlePaystackPayment = () => {
+    // Validate required fields
+    if (!userDetails.email) {
+      onError("Email address is required");
+      return;
+    }
+
+    if (!userDetails.firstName || !userDetails.lastName) {
+      onError("Full name is required");
+      return;
+    }
+
     setIsProcessing(true);
     
+    // Check if Paystack is loaded
+    if (typeof window.PaystackPop === 'undefined') {
+      setIsProcessing(false);
+      onError("Payment service is temporarily unavailable. Please refresh the page.");
+      return;
+    }
+
     try {
-      // Initialize Paystack payment
       const handler = window.PaystackPop.setup({
         key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
         email: userDetails.email,
@@ -25,11 +42,12 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
             {
               display_name: "Phone Number",
               variable_name: "phone_number",
-              value: userDetails.phone,
+              value: userDetails.phone || "",
             },
           ],
           order_id: `RAVE-${Date.now()}`,
           discount_code: discountCode,
+          event_name: "RAVECULTION",
         },
         callback: function (response) {
           setIsProcessing(false);
@@ -38,18 +56,19 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
             reference: response.reference,
             amount: orderSummary.total,
             currency: "NGN",
+            transaction_id: response.transaction,
           });
         },
         onClose: function () {
           setIsProcessing(false);
-          onError("Payment was cancelled");
+          onError("Payment was cancelled by user");
         },
       });
       
       handler.openIframe();
     } catch (error) {
       setIsProcessing(false);
-      onError("Payment initialization failed");
+      onError("Failed to initialize payment. Please try again.");
     }
   };
 
@@ -82,12 +101,16 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
       {/* Payment Summary */}
       <div className="bg-gray-50 p-4 rounded-lg">
         <div className="flex justify-between items-center mb-2">
+          <span className="text-sm font-medium">Amount in USD:</span>
+          <span className="font-semibold">$ {orderSummary.total}</span>
+        </div>
+        <div className="flex justify-between items-center">
           <span className="text-sm font-medium">Amount in Naira:</span>
           <span className="font-semibold">
             ₦{(orderSummary.total * 1600).toLocaleString()}
           </span>
         </div>
-        <div className="text-xs text-gray-600">
+        <div className="text-xs text-gray-600 mt-1">
           Exchange rate: $1 ≈ ₦1,600
         </div>
       </div>
@@ -95,15 +118,27 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
       {/* Pay Button */}
       <button
         onClick={handlePaystackPayment}
-        disabled={isProcessing}
-        className="w-full bg-[#006F6A] text-white py-3 px-4 rounded-md font-semibold hover:bg-[#005a55] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={isProcessing || !userDetails.email}
+        className="w-full bg-[#006F6A] text-white py-3 px-4 rounded-md font-semibold hover:bg-[#005a55] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
       >
-        {isProcessing ? "Processing..." : `Pay ₦${(orderSummary.total * 1600).toLocaleString()}`}
+        {isProcessing ? (
+          <>
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+            Initializing...
+          </>
+        ) : (
+          `Pay ₦${(orderSummary.total * 1600).toLocaleString()}`
+        )}
       </button>
 
       <div className="flex items-center text-sm text-gray-600">
         <Mail className="h-4 w-4 mr-2" />
         <span>Tickets will be sent to: {userDetails.email}</span>
+      </div>
+
+      {/* Security Note */}
+      <div className="text-xs text-gray-500 text-center">
+        🔒 Your payment is secured by Paystack. We never store your card details.
       </div>
     </div>
   );
