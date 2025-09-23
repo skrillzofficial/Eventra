@@ -36,7 +36,7 @@ const Nav = () => {
           user = JSON.parse(userStr);
         }
 
-        console.log("🔐 Nav auth check - Token exists:", !!token, "User exists:", !!user);
+        // console.log(" Nav auth check - Token exists:", !!token, "User exists:", !!user);
 
         if (token && user) {
           setIsAuthenticated(true);
@@ -54,8 +54,7 @@ const Nav = () => {
 
     checkAuth();
     
-    // Only check every 5 seconds instead of every second to reduce frequency
-    const interval = setInterval(checkAuth, 5000);
+    const interval = setInterval(checkAuth, 20000);
     
     return () => clearInterval(interval);
   }, [location]);
