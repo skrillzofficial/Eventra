@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   Menu,
   X,
@@ -20,17 +20,45 @@ const Nav = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  
+  const location = useLocation();
 
-  // Check authentication status on component mount
+  // Fixed authentication check
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
+    const checkAuth = () => {
+      try {
+        const token = localStorage.getItem("token");
+        const userStr = localStorage.getItem("user");
+        
+        // More robust check for user data
+        let user = null;
+        if (userStr && userStr !== "undefined" && userStr !== "null") {
+          user = JSON.parse(userStr);
+        }
 
-    if (token && user) {
-      setIsAuthenticated(true);
-      setUserData(user);
-    }
-  }, []);
+        console.log("🔐 Nav auth check - Token exists:", !!token, "User exists:", !!user);
+
+        if (token && user) {
+          setIsAuthenticated(true);
+          setUserData(user);
+        } else {
+          setIsAuthenticated(false);
+          setUserData(null);
+        }
+      } catch (error) {
+        console.error("Error checking auth:", error);
+        setIsAuthenticated(false);
+        setUserData(null);
+      }
+    };
+
+    checkAuth();
+    
+    // Only check every 5 seconds instead of every second to reduce frequency
+    const interval = setInterval(checkAuth, 5000);
+    
+    return () => clearInterval(interval);
+  }, [location]);
 
   // Add scroll effect for glassy background
   useEffect(() => {
@@ -59,7 +87,6 @@ const Nav = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Redirect to search results page or perform search
       window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
       setIsSearchOpen(false);
       setSearchQuery("");
@@ -208,12 +235,12 @@ const Nav = () => {
                   >
                     <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
                       {userData?.firstName?.[0]?.toUpperCase() ||
-                        userData?.userName?.[0]?.toUpperCase() || (
-                          <User className="h-4 w-4 text-white" />
-                        )}
+                        userData?.userName?.[0]?.toUpperCase() ||
+                        <User className="h-4 w-4 text-white" />
+                      }
                     </div>
                     <span className="text-sm font-medium hidden lg:block">
-                      {userData?.userName || userData?.firstName}
+                      {userData?.userName || userData?.firstName || "User"}
                     </span>
                   </button>
                   {isUserMenuOpen && <UserDropdown />}

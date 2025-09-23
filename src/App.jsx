@@ -12,6 +12,8 @@ import ProfilePage from "./components/pages/ProfilePage";
 import EventDetails from "./components/pages/EventDetails";
 import CheckoutOne from "./components/PaymentCheckout/CheckoutOne";
 import CheckoutTwo from "./components/PaymentCheckout/CheckoutTwo";
+import Onboarding from "./Auth/OnBoarding";
+import MyTickets from './components/pages/MyTickets';
 
 function App() {
   return (
@@ -25,12 +27,14 @@ function App() {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/event-details/:id" element={<EventDetails />} />
+            <Route path="/my-tickets" element={<MyTickets />} />
             {/* Checkout */}
             <Route path="/checkout/one" element={<CheckoutOne />} />
             <Route path="/checkout/two" element={<CheckoutTwo />} />
             {/* Auth */}
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/onboarding" element={<Onboarding />} />
           </Routes>
         </CheckoutProvider>
       </AuthProvider>

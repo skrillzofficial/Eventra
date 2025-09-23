@@ -1,0 +1,59 @@
+export const onboardingQuestions = [
+  {
+    id: "eventTypes",
+    question: "What types of events do you enjoy?",
+    type: "multi-select",
+    options: [
+      "Concerts",
+      "Conferences",
+      "Workshops",
+      "Sports",
+      "Networking",
+      "Parties",
+      "Cultural",
+      "Food & Drink",
+    ],
+    required: true,
+  },
+  {
+    id: "interests",
+    question: "What are your main interests?",
+    type: "multi-select",
+    options: [
+      "Technology",
+      "Music",
+      "Art",
+      "Business",
+      "Health",
+      "Education",
+      "Travel",
+      "Food",
+    ],
+    required: true,
+  },
+  {
+    id: "budgetRange",
+    type: "range",
+    question: "What's your preferred budget range for events?",
+    required: true,
+    options: {
+      min: 0, // Minimum possible value
+      max: 500, // Maximum possible value
+      step: 10, // Increment step
+    },
+  },
+  {
+    id: "locationPreference",
+    question: "Where do you prefer events?",
+    type: "single-select",
+    options: ["City Center", "Suburbs", "Online", "Anywhere"],
+    required: false,
+  },
+  {
+    id: "groupSize",
+    question: "Preferred group size for events?",
+    type: "number",
+    options: { min: 1, max: 50 },
+    required: false,
+  },
+];

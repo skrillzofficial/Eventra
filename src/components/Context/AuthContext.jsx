@@ -17,27 +17,55 @@ export function AuthProvider({ children }) {
 
   // Check if user is logged in on component mount
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-
-    if (token && userData) {
-      try {
-        setUser(JSON.parse(userData));
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-        // Clear invalid data
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
-        setIsAuthenticated(false);
-      }
-    }
-    setLoading(false);
+    checkAuthStatus();
   }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+
+      if (token && userData) {
+        // Verify token is still valid with backend
+        const response = await fetch(
+          "https://ecommerce-backend-tb8u.onrender.com/api/v1/verify-token",
+          {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const user = JSON.parse(userData);
+          setUser(user);
+          setIsAuthenticated(true);
+        } else {
+          // Token is invalid, logout user
+          logout();
+        }
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+      // On network errors, use local storage data as fallback
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      if (token && userData) {
+        try {
+          setUser(JSON.parse(userData));
+          setIsAuthenticated(true);
+        } catch (parseError) {
+          logout();
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (loginData) => {
     try {
+      setLoading(true);
       const response = await fetch(
         "https://ecommerce-backend-tb8u.onrender.com/api/v1/login",
         {
@@ -51,26 +79,47 @@ export function AuthProvider({ children }) {
 
       const data = await response.json();
 
-      if (response.ok) {
-        // Save token and user data
+      if (response.ok && data.success) {
+        // Ensure user data has onboardingCompleted field
+        const userData = {
+          ...data.user,
+          onboardingCompleted: data.user.onboardingCompleted || false
+        };
+
+        // Save to localStorage
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(userData));
         
-        setUser(data.user);
+        // Update state
+        setUser(userData);
         setIsAuthenticated(true);
         
-        return { success: true, data };
+        console.log("Login successful - onboarding status:", userData.onboardingCompleted);
+        
+        return { 
+          success: true, 
+          data: userData
+        };
       } else {
-        return { success: false, error: data.message || "Login failed" };
+        return { 
+          success: false, 
+          error: data.message || data.error || "Login failed" 
+        };
       }
     } catch (error) {
       console.error("Login error:", error);
-      return { success: false, error: "Network error. Please try again." };
+      return { 
+        success: false, 
+        error: "Network error. Please try again." 
+      };
+    } finally {
+      setLoading(false);
     }
   };
 
   const register = async (registerData) => {
     try {
+      setLoading(true);
       const response = await fetch(
         "https://ecommerce-backend-tb8u.onrender.com/api/v1/register",
         {
@@ -84,14 +133,38 @@ export function AuthProvider({ children }) {
 
       const data = await response.json();
 
-      if (response.ok) {
-        return { success: true, data };
+      if (response.ok && data.success) {
+        // New users typically haven't completed onboarding
+        const userData = {
+          ...data.user,
+          onboardingCompleted: data.user.onboardingCompleted || false
+        };
+
+        // Auto-login after registration
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(userData));
+        
+        setUser(userData);
+        setIsAuthenticated(true);
+        
+        return { 
+          success: true, 
+          data: userData
+        };
       } else {
-        return { success: false, error: data.message || "Registration failed" };
+        return { 
+          success: false, 
+          error: data.message || data.error || "Registration failed" 
+        };
       }
     } catch (error) {
       console.error("Registration error:", error);
-      return { success: false, error: "Network error. Please try again." };
+      return { 
+        success: false, 
+        error: "Network error. Please try again." 
+      };
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,6 +176,12 @@ export function AuthProvider({ children }) {
     setIsAuthenticated(false);
   };
 
+  const updateUser = (updatedUserData) => {
+    const newUserData = { ...user, ...updatedUserData };
+    setUser(newUserData);
+    localStorage.setItem("user", JSON.stringify(newUserData));
+  };
+
   const value = {
     user,
     isAuthenticated,
@@ -110,6 +189,8 @@ export function AuthProvider({ children }) {
     login,
     register,
     logout,
+    updateUser,
+    checkAuthStatus,
   };
 
   return (

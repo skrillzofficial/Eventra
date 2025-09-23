@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import loogin from "../assets/LogIn.jpg";
 import google from "../assets/google.png";
@@ -19,48 +19,70 @@ const Login = () => {
   const navigate = useNavigate();
   const { login, logout } = useAuth();
 
+  // Load remembered email on component mount
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem("rememberedEmail");
+    if (rememberedEmail) {
+      setFormData(prev => ({
+        ...prev,
+        login: rememberedEmail,
+        rememberme: true
+      }));
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    // Clear error
     if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  e.preventDefault();
+  setLoading(true);
+  setError("");
 
-    // Validation
-    if (!formData.login || !formData.password) {
-      setError("Please fill in all fields");
-      setLoading(false);
-      return;
-    }
-
-    const result = await login({
-      login: formData.login,
-      password: formData.password,
-    });
-
-    if (result.success) {
-      // If remember me is checked, store credentials
-      if (formData.rememberme) {
-        localStorage.setItem("rememberedEmail", formData.login);
-      } else {
-        localStorage.removeItem("rememberedEmail");
-      }
-
-      console.log("Login successful:", result.data);
-      navigate("/profile");
-    } else {
-      setError(result.error);
-    }
-    
+  if (!formData.login.trim() || !formData.password.trim()) {
+    setError("Please fill in all fields");
     setLoading(false);
+    return;
+  }
+
+  const result = await login({
+    login: formData.login.trim(),
+    password: formData.password,
+  });
+
+  console.log("Login result:", result);
+
+  if (result.success) {
+    if (formData.rememberme) {
+      localStorage.setItem("rememberedEmail", formData.login.trim());
+    } else {
+      localStorage.removeItem("rememberedEmail");
+    }
+
+    // Check onboarding status
+    const needsOnboarding = !result.data.onboardingCompleted;
+    console.log("Needs onboarding:", needsOnboarding);
+    
+    if (needsOnboarding) {
+      navigate("/onboarding", { replace: true });
+    } else {
+      navigate("/profile", { replace: true });
+    }
+  } else {
+    setError(result.error);
+  }
+
+  setLoading(false);
+};
+  // Handle Google login
+  const handleGoogleLogin = () => {
+    console.log("Google login clicked");
   };
 
   return (
@@ -70,115 +92,122 @@ const Login = () => {
         <div className="mx-auto w-full max-w-md">
           {/* Logo */}
           <div className="flex items-center space-y-8 mb-6">
-            <a href="/">
-              <div className="flex items-center ">
+            <Link to="/">
+              <div className="flex items-center">
                 <div className="flex relative">
                   <img
                     className="h-3 w-auto absolute right-4 top-3"
                     src={logo1}
-                    alt=""
+                    alt="Eventra logo detail"
                   />
-                  <img className="h-5 w-auto" src={Brandlogo} alt="Logo" />
+                  <img className="h-5 w-auto" src={Brandlogo} alt="Eventra Logo" />
                 </div>
-
                 <span className="ml-2 text-xl font-bold text-[#000000]">
                   Eventra
                 </span>
               </div>
-            </a>
+            </Link>
           </div>
-          
+
           <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight">
             Welcome Back!
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Continue with email address you used to create account
+            Continue with the email address you used to create your account
           </p>
 
           {/* Error message */}
           {error && (
-            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="login" className="block text-sm font-medium text-gray-700">
                 Email address or Username
               </label>
               <div className="mt-1">
                 <input
+                  id="login"
                   name="login"
                   type="text"
                   value={formData.login}
                   onChange={handleChange}
-                  className="py-2 px-3 text-sm block w-full border-2 border-gray-300 rounded-md focus:ring-[#006F6A] focus:border-[#006F6A]"
-                  placeholder="Enter your Email"
+                  className="py-2 px-3 text-sm block w-full border-2 border-gray-300 rounded-md focus:ring-[#006F6A] focus:border-[#006F6A] transition-colors"
+                  placeholder="Enter your email or username"
                   disabled={loading}
+                  autoComplete="email"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
               <div className="mt-1 relative">
                 <input
+                  id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={handleChange}
-                  className="py-2 px-3 pr-10 text-sm block w-full border-2 border-gray-300 rounded-md focus:ring-[#006F6A] focus:border-[#006F6A]"
+                  className="py-2 px-3 pr-10 text-sm block w-full border-2 border-gray-300 rounded-md focus:ring-[#006F6A] focus:border-[#006F6A] transition-colors"
                   placeholder="Enter your password"
                   disabled={loading}
+                  autoComplete="current-password"
                 />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={loading}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500 focus:outline-none disabled:opacity-50"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
               </div>
             </div>
 
             <div className="flex justify-between items-center">
-              <div className="flex items-start pt-1">
+              <label className="flex items-center space-x-2 cursor-pointer">
                 <input
                   name="rememberme"
                   type="checkbox"
                   checked={formData.rememberme}
                   onChange={handleChange}
-                  className="h-4 w-4 mt-0.5 border-gray-300 cursor-pointer rounded text-[#006F6A] focus:ring-[#006F6A] accent-[#006F6A]"
+                  className="h-4 w-4 border-gray-300 rounded text-[#006F6A] focus:ring-[#006F6A] accent-[#006F6A] cursor-pointer"
                   disabled={loading}
                 />
-                <p className="ml-2 text-sm text-gray-600 leading-4">
-                  Remember Me
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-[#006F6A] hover:text-[#005a55] cursor-pointer">
-                  Forgot password
-                </p>
-              </div>
+                <span className="text-sm text-gray-600">Remember Me</span>
+              </label>
+              <Link 
+                to="/forgot-password" 
+                className="text-sm text-[#006F6A] hover:text-[#005a55] transition-colors"
+              >
+                Forgot password?
+              </Link>
             </div>
 
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full flex justify-center cursor-pointer py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#006F6A] hover:bg-[#005a55] disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading || !formData.login.trim() || !formData.password.trim()}
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#006F6A] hover:bg-[#005a55] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {loading ? "Signing In..." : "Sign In"}
+                {loading ? (
+                  <span className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Signing In...
+                  </span>
+                ) : (
+                  "Sign In"
+                )}
               </button>
             </div>
           </form>
@@ -196,27 +225,27 @@ const Login = () => {
             <div className="mt-4">
               <button
                 type="button"
+                onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-full inline-flex justify-center py-2.5 px-4 border rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                className="w-full inline-flex justify-center py-2.5 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 transition-colors"
               >
-                <div className="flex gap-2 cursor-pointer items-center">
-                  <div className="w-4 h-4 rounded-sm flex items-center justify-center text-xs">
-                    <img src={google} alt="Google" />
-                  </div>
-                  <p>Continue with Google</p>
+                <div className="flex gap-2 items-center">
+                  <img src={google} alt="Google" className="w-4 h-4" />
+                  <span>Continue with Google</span>
                 </div>
               </button>
             </div>
 
-            <div className="mt-4">
-              <div className="flex gap-1 items-center justify-start text-center">
-                <p className="text-sm text-gray-600">New User?</p>
-                <Link to="/signup">
-                  <button className="text-[#006F6A] hover:text-[#005a55] text-sm font-medium cursor-pointer">
-                    Sign Up
-                  </button>
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                New User?{" "}
+                <Link 
+                  to="/signup" 
+                  className="text-[#006F6A] hover:text-[#005a55] font-medium transition-colors"
+                >
+                  Sign Up
                 </Link>
-              </div>
+              </p>
             </div>
           </div>
         </div>
@@ -225,9 +254,9 @@ const Login = () => {
       {/* Image Section */}
       <div className="w-full lg:w-1/2">
         <div className="flex items-center justify-center w-full h-full">
-          <img 
-            src={loogin} 
-            alt="Login" 
+          <img
+            src={loogin}
+            alt="Login illustration"
             className="w-full h-full object-cover md:rounded-l-3xl"
           />
         </div>
