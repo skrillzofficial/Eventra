@@ -28,7 +28,7 @@ const PaystackPayment = ({ orderSummary, userDetails, onSuccess, onError }) => {
 
     try {
       const handler = window.PaystackPop.setup({
-        key: process.env.PAYSTACK_PUBLIC_KEY,
+        key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY,
         email: userDetails.email,
         amount: orderSummary.total * 100, // Convert to kobo
         currency: "NGN",
