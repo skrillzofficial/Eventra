@@ -257,7 +257,7 @@ const Login = () => {
           <img
             src={loogin}
             alt="Login illustration"
-            className="w-full h-full object-cover md:rounded-l-3xl"
+            className="w-full h-full hidden lg:block object-cover md:rounded-l-3xl"
           />
         </div>
       </div>
